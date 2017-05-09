@@ -213,6 +213,29 @@ public class ServerController {
         }
     }
 
+    /**
+     * Send mouse event
+     * @param mouseButton mouse button
+     * @param eventType eventType. 1 - mouse_down, 2 - mouse_up
+     */
+    public void sendMouseEvent(MouseButton mouseButton, int eventType) {
+        instructionQueue.add(() -> {
+            int button = mouseButton.ordinal() + 1;
+            try {
+                sendPacketToServer(8, dao -> {
+                    dao.writeInt(button);
+                    dao.writeInt(eventType);
+                });
+            } catch (IOException e) {
+                Log.e("server_controller", "Cannot send packet to server", e);
+                log("Cannot send packet to server", e);
+            }
+        });
+        synchronized (instructionQueue) {
+            instructionQueue.notify();
+        }
+    }
+
     public void sendOtherCommand(int instCode, String payload) {
         instructionQueue.add(() -> {
             try {

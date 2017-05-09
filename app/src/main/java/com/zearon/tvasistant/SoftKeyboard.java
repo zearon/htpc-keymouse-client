@@ -10,12 +10,15 @@ import java.util.ArrayList;
  */
 public class SoftKeyboard {
     private int SHIFT_STATUS = 0;
-    private final ArrayList<Button> keyButtons = new ArrayList<>();
+    private boolean SOFT_KEYBOARD_HIDDEN = false;
+
+
     private final ArrayList<Button> digitButtons = new ArrayList<>();
     private final ArrayList<Button> letterButtons = new ArrayList<>();
     private final ArrayList<KeyButtonInfo> otherButtons = new ArrayList<>();
 
     private ServerController controller = ServerController.getInstance();
+    private View shiftButton;
 
     public SoftKeyboard() {
     }
@@ -61,11 +64,19 @@ public class SoftKeyboard {
         letterButtons.add((Button) activity.findViewById(R.id.key_button_n));
         letterButtons.add((Button) activity.findViewById(R.id.key_button_m));
 
-        // Add all key buttons to the keyButtons list
-        keyButtons.addAll(digitButtons);
-        keyButtons.addAll(letterButtons);
+        // Other buttons:
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_backspace), "BackSpace"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.inputSwitchButton), "ctrl+space"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_space), "space"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_at), "at"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_underscore), "underscore"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_dash), "minus"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_dot), "period"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_comma), "comma"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_colon), "colon"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_slash), "slash"));
 
-        // Add event listeners for all key buttons
+        // Add event listeners for all digit key buttons
         for (Button digitButton : digitButtons) {
             digitButton.setOnClickListener(new View.OnClickListener() {
                 String keyText = null;
@@ -81,7 +92,7 @@ public class SoftKeyboard {
             });
         }
 
-        // Add event listeners for all key buttons
+        // Add event listeners for all letter key buttons
         for (Button letterButton : letterButtons) {
             letterButton.setOnClickListener(new View.OnClickListener() {
                 String keyText = null;
@@ -97,17 +108,26 @@ public class SoftKeyboard {
             });
         }
 
+        // Add event listeners for all other key buttons
+        for (KeyButtonInfo buttonInfo : otherButtons) {
+            buttonInfo.button.setOnClickListener(v -> onOtherButtonClicked(buttonInfo) );
+        }
+
         // Add event listener for shift key
-        activity.findViewById(R.id.key_button_shift).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onShiftClicked(v);
-            }
-        });
+        shiftButton = activity.findViewById(R.id.key_button_shift);
+        shiftButton.setOnClickListener(v -> onShiftClicked(v));
+
+        // Soft keyboard toggle button
+        if (SOFT_KEYBOARD_HIDDEN) {
+            activity.findViewById(R.id.bottomPanel).setVisibility(View.GONE);
+        }
+        // Add event listener for toggle soft keyboard button
+        activity.findViewById(R.id.toggleSoftKeyboardBtn).setOnClickListener(
+                v -> onToggleSoftKeyboardBtnClicked(activity.findViewById(R.id.bottomPanel)));
     }
 
     /**
-     * Event Listener for key button press on soft keyboard.
+     * Event Listener for digit key button press on soft keyboard.
      * @param btn Button clicked
      * @param keyText Key text for the button
      */
@@ -117,7 +137,7 @@ public class SoftKeyboard {
     }
 
     /**
-     * Event Listener for key button press on soft keyboard.
+     * Event Listener for letter key button press on soft keyboard.
      * @param btn Button clicked
      * @param keyText Key text for the button
      */
@@ -139,6 +159,17 @@ public class SoftKeyboard {
     }
 
     /**
+     * Event Listener for other key button press on soft keyboard.
+     * @param buttonInfo KeyButtonInfo
+     */
+    private void onOtherButtonClicked(KeyButtonInfo buttonInfo) {
+        Log.v("main", "Key Button Clicked: " + buttonInfo.keyText);
+
+        // Send key to server
+        controller.sendKeyPress(buttonInfo.keyText);
+    }
+
+    /**
      * Event listener for shift key button press on soft keyboard.
      * @param btn Button clicked
      */
@@ -148,22 +179,17 @@ public class SoftKeyboard {
         switch (SHIFT_STATUS) {
             case 0:
                 changeKeyButtonTextCase(false);
+                ((Button) shiftButton).setText("shift");
                 break;
             case 1:
                 changeKeyButtonTextCase(true);
+                ((Button) shiftButton).setText("Shift");
                 break;
             case 2:
                 changeKeyButtonTextCase(true);
+                ((Button) shiftButton).setText("SHIFT");
                 break;
         }
-    }
-
-    /**
-     * Event listener for backspace key button press on soft keyboard.
-     * @param btnInfo KeyButtonInfo instance corresponding to the button clicked.
-     */
-    private void onOtherButtonClicked(KeyButtonInfo btnInfo) {
-        //
     }
 
     /**
@@ -182,13 +208,22 @@ public class SoftKeyboard {
             }
         }
     }
+
+    public void onToggleSoftKeyboardBtnClicked(View bottomPanel) {
+        SOFT_KEYBOARD_HIDDEN = ! SOFT_KEYBOARD_HIDDEN;
+        if (SOFT_KEYBOARD_HIDDEN) {
+            bottomPanel.setVisibility(View.GONE);
+        } else {
+            bottomPanel.setVisibility(View.VISIBLE);
+        }
+    }
 }
 
 class KeyButtonInfo {
-    public Button button;
+    public View button;
     public String keyText;
 
-    public KeyButtonInfo(Button button, String keyText) {
+    public KeyButtonInfo(View button, String keyText) {
         this.button = button;
         this.keyText = keyText;
     }

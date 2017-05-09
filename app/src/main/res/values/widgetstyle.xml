@@ -47,21 +47,20 @@
         <item name="android:layout_weight">1.35</item>
     </style>
 
-    <!--定义一个叫 key_button_line4 的style-->
+    <!--定义一个叫 key_button_line4 的style ：标点符号按键 -->
     <style name="key_button_line4" parent="@android:style/Widget.Button">
         <item name="android:layout_width">0px</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:padding">2dp</item>
         <item name="android:layout_margin">0dp</item>
-        <item name="android:layout_weight">1</item>
     </style>
 
-    <!--定义一个叫 key_button_line4_margin 的style ：Shift及BackSpace按键 -->
-    <style name="key_button_line4_margin" parent="@android:style/Widget.Button">
+    <!--定义一个叫 key_button_line4_sym 的style ：标点符号按键 -->
+    <style name="key_button_line4_sym" parent="@android:style/Widget.Button">
         <item name="android:layout_width">0px</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:padding">2dp</item>
         <item name="android:layout_margin">0dp</item>
-        <item name="android:layout_weight">1.35</item>
+        <item name="android:layout_weight">0.5</item>
     </style>
 </resources>
