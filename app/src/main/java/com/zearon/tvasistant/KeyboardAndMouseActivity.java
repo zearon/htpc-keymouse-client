@@ -1,12 +1,15 @@
 package com.zearon.tvasistant;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -49,7 +52,7 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
-    private View mControlsView;
+//    private View mControlsView;
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
@@ -58,7 +61,7 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.show();
             }
-            mControlsView.setVisibility(View.VISIBLE);
+//            mControlsView.setVisibility(View.VISIBLE);
         }
     };
     private boolean mVisible;
@@ -83,29 +86,47 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
         }
     };
 
+    private final Config config = Config.initInstance(this);
+    private final ServerController controller = ServerController.getInstance();
+
+    private final SoftKeyboard softKeyboard = new SoftKeyboard();
+    private View mouseView = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_keyboard_and_mouse);
 
-        mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = findViewById(R.id.fullscreen_content);
+        Resources resources = getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen","android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        findViewById(R.id.fullscreen_container).setPadding(0, height, 0, 0);
 
+        mVisible = true;
+//        mControlsView = findViewById(R.id.fullscreen_content_controls);
+        mContentView = findViewById(R.id.fullscreen_content);
 
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                toggle();
+                // toggle();
             }
         });
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        // findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        softKeyboard.initWithKeyButtons(this);
+
+        mouseView = findViewById(R.id.logTextView);
+        mouseView.setOnTouchListener(new TouchPadTouchListener());
+        findViewById((R.id.mouseLeftButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.LEFT));
+        findViewById((R.id.mouseMiddleButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.MIDDLE));
+        findViewById((R.id.mouseRightButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.RIGHT));
     }
 
     @Override
@@ -132,7 +153,7 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-        mControlsView.setVisibility(View.GONE);
+//        mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -160,4 +181,34 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    public void onStartBrowserBtnClicked(View v) {
+        controller.startBrowser();
+    }
+
+    public void onStopBrowserBtnClicked(View v) {
+        controller.stopBrowser();
+    }
+
+    public void onOtherCommandBtnClicked(View v) {
+        // Not implemented yet.
+    }
+
+    public void onTypeTextBtnClicked(View v) {
+        EditText editText = (EditText) findViewById(R.id.typeContentEditText);
+        String text = editText.getText().toString();
+        editText.setText("");
+        Log.v("main", "Type text: " + text);
+        controller.sendTextInput(text);
+    }
+
+    public void onEnterPressBtnClicked(View v) {
+        controller.sendKeyPress("Return");
+    }
+
+    public void onClearTextButtonClicked(View v) {
+        EditText edit = (EditText) findViewById(R.id.typeContentEditText);
+        edit.setText("");
+    }
+
 }
