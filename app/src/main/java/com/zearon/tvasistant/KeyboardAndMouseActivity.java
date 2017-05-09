@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -84,6 +85,9 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
             return false;
         }
     };
+
+    private final Config config = Config.initInstance(this);
+    private final ServerController controller = ServerController.getInstance();
 
     private final SoftKeyboard softKeyboard = new SoftKeyboard();
 
@@ -165,5 +169,39 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    public void onStartBrowserBtnClicked(View v) {
+        controller.startBrowser();
+    }
+
+    public void onStopBrowserBtnClicked(View v) {
+        controller.stopBrowser();
+    }
+
+    public void onOtherCommandBtnClicked(View v) {
+        // Not implemented yet.
+    }
+
+    public void onTypeTextBtnClicked(View v) {
+        String text = ((EditText) findViewById(R.id.typeContentEditText)).getText().toString();
+        Log.v("main", "Type text: " + text);
+        controller.sendTextInput(text);
+    }
+
+    public void onEnterPressBtnClicked(View v) {
+        controller.sendKeyPress("Return");
+    }
+
+    public void onMouseLeftButtonClicked(View v) {
+        controller.sendMouseClick(ServerController.MouseButton.LEFT);
+    }
+
+    public void onMouseMiddleButtonClicked(View v) {
+        controller.sendMouseClick(ServerController.MouseButton.MIDDLE);
+    }
+
+    public void onMouseRightButtonClicked(View v) {
+        controller.sendMouseClick(ServerController.MouseButton.RIGHT);
     }
 }

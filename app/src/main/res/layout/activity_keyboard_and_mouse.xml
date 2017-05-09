@@ -28,21 +28,24 @@
                 android:text="@string/start_browser"
                 android:id="@+id/startBrowserButton"
                 android:paddingLeft="2dp"
-                android:paddingRight="2dp" />
+                android:paddingRight="2dp"
+                android:onClick="onStartBrowserBtnClicked"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stop_browser"
                 android:id="@+id/stopBrowserButton"
                 android:paddingLeft="2dp"
-                android:paddingRight="2dp" />
+                android:paddingRight="2dp"
+                android:onClick="onStopBrowserBtnClicked"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/other_command"
                 android:id="@+id/otherCommandButton"
                 android:paddingLeft="2dp"
-                android:paddingRight="2dp" />
+                android:paddingRight="2dp"
+                android:onClick="onOtherCommandBtnClicked"/>
         </LinearLayout>
 
         <TableLayout
@@ -57,7 +60,7 @@
                 <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/editText" android:text="@string/input_text_here"
+                    android:id="@+id/typeContentEditText" android:text="@string/input_text_here"
                     android:layout_gravity="top" />
 
                 <Button
@@ -66,7 +69,8 @@
                     android:text="@string/type"
                     android:id="@+id/typeTextButton"
                     android:paddingLeft="2dp"
-                    android:paddingRight="2dp" />
+                    android:paddingRight="2dp"
+                    android:onClick="onTypeTextBtnClicked"/>
 
                 <Button
                     android:layout_width="40dp"
@@ -74,13 +78,14 @@
                     android:text="@string/enter"
                     android:id="@+id/sendEnterButton"
                     android:paddingLeft="2dp"
-                    android:paddingRight="2dp" />
+                    android:paddingRight="2dp"
+                    android:onClick="onEnterPressBtnClicked"/>
             </TableRow>
         </TableLayout>
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
             android:stretchColumns="0,2">
 
             <TableRow
@@ -92,24 +97,31 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/mouseLeftButton"
                     android:paddingLeft="2dp"
-                    android:paddingRight="2dp"  />
+                    android:paddingRight="2dp"
+                    android:onClick="onMouseLeftButtonClicked"/>
 
                 <Button
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/mouseMiddelButton"
+                    android:id="@+id/mouseMiddleButton"
                     android:paddingLeft="2dp"
-                    android:paddingRight="2dp"  />
+                    android:paddingRight="2dp"
+                    android:onClick="onMouseMiddleButtonClicked"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/mouseRightButton"
                     android:paddingLeft="2dp"
-                    android:paddingRight="2dp"  />
+                    android:paddingRight="2dp"
+                    android:onClick="onMouseRightButtonClicked"/>
 
             </TableRow>
         </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
     </LinearLayout>
 
 
@@ -319,9 +331,11 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></LinearLayout>
+            android:layout_height="wrap_content"
+            android:id="@+id/keyboard_line4"></LinearLayout>
     </LinearLayout>
 
+    <!--
     <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
@@ -334,5 +348,5 @@
         </LinearLayout>
 
     </FrameLayout>
-
+    -->
 </FrameLayout>

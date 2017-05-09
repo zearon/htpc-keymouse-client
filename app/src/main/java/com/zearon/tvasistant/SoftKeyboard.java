@@ -15,6 +15,8 @@ public class SoftKeyboard {
     private final ArrayList<Button> letterButtons = new ArrayList<>();
     private final ArrayList<KeyButtonInfo> otherButtons = new ArrayList<>();
 
+    private ServerController controller = ServerController.getInstance();
+
     public SoftKeyboard() {
     }
 
@@ -111,6 +113,7 @@ public class SoftKeyboard {
      */
     private void onDigitButtonClicked(Button btn, String keyText) {
         Log.v("main", "Key Button Clicked: " + keyText);
+        controller.sendKeyPress(keyText);
     }
 
     /**
@@ -132,6 +135,7 @@ public class SoftKeyboard {
         Log.v("main", "Key Button Clicked: " + keyText);
 
         // Send key to server
+        controller.sendKeyPress(keyText);
     }
 
     /**
