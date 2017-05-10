@@ -122,8 +122,15 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
 
         softKeyboard.initWithKeyButtons(this);
 
+//        View hScrollBtn = findViewById(R.id.toggleHscrollButton);
+//        View vScrollBtn = findViewById(R.id.toggleVscrollButton);
+//        TouchPadTouchListener touchPadTouchListener = new TouchPadTouchListener(vScrollBtn, hScrollBtn);
+//        hScrollBtn.setOnClickListener(touchPadTouchListener);
+//        vScrollBtn.setOnClickListener(touchPadTouchListener);
+
         mouseView = findViewById(R.id.logTextView);
         mouseView.setOnTouchListener(new TouchPadTouchListener());
+
         findViewById((R.id.mouseLeftButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.LEFT));
         findViewById((R.id.mouseMiddleButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.MIDDLE));
         findViewById((R.id.mouseRightButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.RIGHT));
@@ -209,6 +216,10 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
     public void onClearTextButtonClicked(View v) {
         EditText edit = (EditText) findViewById(R.id.typeContentEditText);
         edit.setText("");
+    }
+
+    public void onEscButtonClicked(View v) {
+        controller.sendKeyPress("Escape");
     }
 
 }
