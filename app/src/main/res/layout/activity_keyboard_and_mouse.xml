@@ -35,6 +35,13 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/top1Panel">
 
+                        <ImageButton
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:id="@+id/configButton"
+                            android:layout_gravity="center_vertical|left"
+                            android:background="@drawable/config" />
+
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -68,12 +75,6 @@
                             android:paddingRight="2dp"
                             android:onClick="onOtherCommandBtnClicked"/>
 
-                        <ImageButton
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:id="@+id/configButton"
-                            android:layout_gravity="center_vertical|left"
-                            android:background="@drawable/config" />
                     </LinearLayout>
 
                     <TableLayout
@@ -134,30 +135,28 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/mouseLeftButton"
-                                android:paddingLeft="2dp"
-                                android:paddingRight="2dp" />
+                                android:text="@string/mouse_left_button"
+                                style="@style/MouseButtonStyle"/>
 
                             <Button
                                 android:layout_width="40dp"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/mouseMiddleButton"
-                                android:paddingLeft="2dp"
-                                android:paddingRight="2dp" />
+                                style="@style/MouseButtonStyle" />
 
                             <Button
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/mouseRightButton"
-                                android:paddingLeft="2dp"
-                                android:paddingRight="2dp" />
+                                android:text="@string/mouse_right_button"
+                                style="@style/MouseButtonStyle" />
 
                             <ImageButton
                                 android:layout_width="30dp"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/toggleSoftKeyboardBtn"
                                 android:background="@android:drawable/ic_dialog_dialer"
-                                android:layout_gravity="center_vertical"
-                                android:onClick="onToggleSoftKeyboardBtnClicked" />
+                                android:layout_gravity="center_vertical" />
 
                         </TableRow>
                     </TableLayout>
@@ -453,7 +452,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentBottom="true"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <ImageButton
                         android:layout_width="32dp"

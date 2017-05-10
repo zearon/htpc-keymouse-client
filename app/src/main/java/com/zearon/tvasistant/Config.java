@@ -42,4 +42,8 @@ public class Config {
     public int getServerPort() {
         return 8888;
     }
+
+    public int getScrollThresholdPixel() {
+        return 10;
+    }
 }
