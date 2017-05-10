@@ -44,12 +44,16 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+//            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+//            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
 //    private View mControlsView;
@@ -98,10 +102,10 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_keyboard_and_mouse);
 
-        Resources resources = getResources();
+        /*Resources resources = getResources();
         int resourceId = resources.getIdentifier("status_bar_height", "dimen","android");
         int height = resources.getDimensionPixelSize(resourceId);
-        findViewById(R.id.fullscreen_container).setPadding(0, height, 0, 0);
+        findViewById(R.id.fullscreen_container).setPadding(0, height, 0, 0);*/
 
         mVisible = true;
 //        mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -122,8 +126,15 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
 
         softKeyboard.initWithKeyButtons(this);
 
+//        View hScrollBtn = findViewById(R.id.toggleHscrollButton);
+//        View vScrollBtn = findViewById(R.id.toggleVscrollButton);
+//        TouchPadTouchListener touchPadTouchListener = new TouchPadTouchListener(vScrollBtn, hScrollBtn);
+//        hScrollBtn.setOnClickListener(touchPadTouchListener);
+//        vScrollBtn.setOnClickListener(touchPadTouchListener);
+
         mouseView = findViewById(R.id.logTextView);
-        mouseView.setOnTouchListener(new TouchPadTouchListener());
+        mouseView.setOnTouchListener(new TouchPadTouchListener(this));
+
         findViewById((R.id.mouseLeftButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.LEFT));
         findViewById((R.id.mouseMiddleButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.MIDDLE));
         findViewById((R.id.mouseRightButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.RIGHT));
@@ -197,7 +208,7 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
     public void onTypeTextBtnClicked(View v) {
         EditText editText = (EditText) findViewById(R.id.typeContentEditText);
         String text = editText.getText().toString();
-        editText.setText("");
+//        editText.setText("");
         Log.v("main", "Type text: " + text);
         controller.sendTextInput(text);
     }
@@ -209,6 +220,10 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
     public void onClearTextButtonClicked(View v) {
         EditText edit = (EditText) findViewById(R.id.typeContentEditText);
         edit.setText("");
+    }
+
+    public void onEscButtonClicked(View v) {
+        controller.sendKeyPress("Escape");
     }
 
 }

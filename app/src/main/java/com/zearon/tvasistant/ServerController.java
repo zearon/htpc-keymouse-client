@@ -103,114 +103,56 @@ public class ServerController {
     }
 
     public void startBrowser() {
-        instructionQueue.add(() -> {
-            try {
-                sendPacketToServer(1, null);
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
-        });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
+        addCommand(1, null);
     }
 
     public void stopBrowser() {
-        instructionQueue.add(() -> {
-            try {
-                sendPacketToServer(2, null);
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
-        });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
+        addCommand(2, null);
     }
 
     public void sendTextInput(String text) {
-        instructionQueue.add(() -> {
-            try {
-                sendPacketToServer(3, dao -> {
-                    dao.write(text.getBytes("utf-8"));
-                });
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
+        addCommand(3, dao -> {
+            dao.write(text.getBytes("utf-8"));
         });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
     }
 
     public void sendKeyPress(String keyText) {
-        instructionQueue.add(() -> {
-            try {
-                sendPacketToServer(4, dao -> {
-                    dao.write(keyText.getBytes("utf-8"));
-                });
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
+        addCommand(4, dao -> {
+            dao.write(keyText.getBytes("utf-8"));
         });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
+    }
+
+    /**
+     * Send key event
+     * @param keyText key text
+     * @param eventType eventType. 1 - key_down, 2 - key_up
+     */
+    public void sendKeyEvent(String keyText, int eventType) {
+        addCommand(9, dao -> {
+            dao.writeInt(eventType);
+            dao.write(keyText.getBytes("utf-8"));
+        });
     }
 
     public void sendMouseMove(int deltaX, int deltaY) {
-        instructionQueue.add(() -> {
-            try {
-                sendPacketToServer(5, dao -> {
-                    dao.writeInt(deltaX);
-                    dao.writeInt(deltaY);
-                });
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
+        addCommand(5, dao -> {
+            dao.writeInt(deltaX);
+            dao.writeInt(deltaY);
         });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
     }
 
     public void sendMouseClick(MouseButton mouseButton) {
-        instructionQueue.add(() -> {
-            int button = mouseButton.ordinal() + 1;
-            try {
-                sendPacketToServer(6, dao -> {
-                    dao.writeInt(button);
-                });
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
+        int button = mouseButton.ordinal() + 1;
+        addCommand(6, dao -> {
+            dao.writeInt(button);
         });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
     }
 
     public void sendMouseDoubleClick(MouseButton mouseButton) {
-        instructionQueue.add(() -> {
-            int button = mouseButton.ordinal() + 1;
-            try {
-                sendPacketToServer(7, dao -> {
-                    dao.writeInt(button);
-                });
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
+        int button = mouseButton.ordinal() + 1;
+        addCommand(7, dao -> {
+            dao.writeInt(button);
         });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
     }
 
     /**
@@ -219,29 +161,23 @@ public class ServerController {
      * @param eventType eventType. 1 - mouse_down, 2 - mouse_up
      */
     public void sendMouseEvent(MouseButton mouseButton, int eventType) {
-        instructionQueue.add(() -> {
-            int button = mouseButton.ordinal() + 1;
-            try {
-                sendPacketToServer(8, dao -> {
-                    dao.writeInt(button);
-                    dao.writeInt(eventType);
-                });
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
+        int button = mouseButton.ordinal() + 1;
+        addCommand(8, dao -> {
+            dao.writeInt(button);
+            dao.writeInt(eventType);
         });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
     }
 
     public void sendOtherCommand(int instCode, String payload) {
+        addCommand(instCode, dao -> {
+            dao.write(payload.getBytes("utf-8"));
+        });
+    }
+
+    private void addCommand(int instCode, AssemblePacketCallback callback) {
         instructionQueue.add(() -> {
             try {
-                sendPacketToServer(instCode, dao -> {
-                    dao.write(payload.getBytes("utf-8"));
-                });
+                sendPacketToServer(instCode, callback);
             } catch (IOException e) {
                 Log.e("server_controller", "Cannot send packet to server", e);
                 log("Cannot send packet to server", e);
