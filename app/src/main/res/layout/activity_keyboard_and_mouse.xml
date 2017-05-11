@@ -29,63 +29,24 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/topPanel">
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/top1Panel">
-
-                        <ImageButton
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:id="@+id/configButton"
-                            android:layout_gravity="center_vertical|left"
-                            android:background="@drawable/config" />
-
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/start_browser"
-                            android:id="@+id/startBrowserButton"
-                            android:paddingLeft="2dp"
-                            android:paddingRight="2dp"
-                            android:onClick="onStartBrowserBtnClicked"/>
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/stop_browser"
-                            android:id="@+id/stopBrowserButton"
-                            android:paddingLeft="2dp"
-                            android:paddingRight="2dp"
-                            android:onClick="onStopBrowserBtnClicked"/>
-
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/exit_full_screen"
-                            android:id="@+id/escButton"
-                            android:onClick="onEscButtonClicked" />
-
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/other_command"
-                            android:id="@+id/otherCommandButton"
-                            android:paddingLeft="2dp"
-                            android:paddingRight="2dp"
-                            android:onClick="onOtherCommandBtnClicked"/>
-
-                    </LinearLayout>
-
                     <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:stretchColumns="0"
+                        android:stretchColumns="1"
                         android:id="@+id/textInputPanel">
 
                         <TableRow
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/menuButton"
+                                android:layout_gravity="right|top"
+                                android:background="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+                                android:layout_marginTop="10dp"
+                                android:visibility="visible" />
 
                             <EditText
                                 android:layout_width="fill_parent"
@@ -176,6 +137,91 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/bottomPanel">
 
+                    <GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:rowCount="2"
+                        android:columnCount="4"
+                        android:id="@+id/commandsPanel">
+
+                        <Button
+                            android:layout_width="36dp"
+                            android:layout_height="wrap_content"
+                            android:text="键盘"
+                            android:id="@+id/switchToKeyboardButton"
+                            android:padding="2dp"
+                            android:layout_row="1"
+                            android:layout_column="0" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/volume_lower"
+                            android:id="@+id/volumeLowerButton"
+                            android:layout_row="1"
+                            android:layout_column="1" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/volume_raise"
+                            android:id="@+id/volumeRaiseButton"
+                            android:layout_row="1"
+                            android:layout_column="2" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sound_output"
+                            android:id="@+id/changeSoundDeviceButton"
+                            android:paddingLeft="2dp"
+                            android:paddingRight="2dp"
+                            android:onClick="onChangeSoundOutputDeviceBtnClicked"
+                            android:layout_row="1"
+                            android:layout_column="3" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/start_browser"
+                            android:id="@+id/startBrowserButton"
+                            android:paddingLeft="2dp"
+                            android:paddingRight="2dp"
+                            android:onClick="onStartBrowserBtnClicked"
+                            android:layout_row="0"
+                            android:layout_column="1" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stop_browser"
+                            android:id="@+id/stopBrowserButton"
+                            android:paddingLeft="2dp"
+                            android:paddingRight="2dp"
+                            android:onClick="onStopBrowserBtnClicked"
+                            android:layout_row="0"
+                            android:layout_column="2" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/exit_full_screen"
+                            android:id="@+id/escButton"
+                            android:onClick="onEscButtonClicked"
+                            android:layout_row="0"
+                            android:layout_column="3" />
+
+                        <ImageButton
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:id="@+id/configButton"
+                            android:layout_gravity="center_vertical|left"
+                            android:background="@drawable/config"
+                            android:layout_row="0"
+                            android:layout_column="0"
+                            android:onClick="onSettingsBtnClicked" />
+                    </GridLayout>
+
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
@@ -189,6 +235,10 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/keyboard_digits">
 
+                            <Button
+                                android:id="@+id/key_button_escape"
+                                android:text="Esc"
+                                style="@style/key_button_digit" />
                             <Button
                                 android:id="@+id/key_button_1"
                                 android:text="1"
@@ -365,9 +415,14 @@
                                 style="@style/key_button_line3" />
                             <ImageButton
                                 android:id="@+id/key_button_backspace"
-                                android:text=""
                                 style="@style/key_button_line3_margin"
-                                android:src="@drawable/backspace" />
+                                android:src="@drawable/backspace"
+                                android:layout_weight="1"/>
+                            <ImageButton
+                                android:id="@+id/key_button_return"
+                                style="@style/key_button_line3_margin"
+                                android:src="@drawable/returnkey"
+                                android:layout_weight="0.7"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -377,8 +432,14 @@
                             android:id="@+id/keyboard_line4">
 
                             <Button
+                                android:text="命令"
+                                android:id="@+id/switchToCommandsButton"
+                                android:layout_weight="0.7"
+                                style="@style/key_button_line4" />
+
+                            <Button
                                 android:text="符"
-                                android:id="@+id/symbolsButton"
+                                android:id="@+id/switchToSymbolsButton"
                                 android:layout_weight="0.5"
                                 style="@style/key_button_line4" />
 
@@ -406,7 +467,7 @@
                             <Button
                                 android:text="空格"
                                 android:id="@+id/key_button_space"
-                                android:layout_weight="1.5"
+                                android:layout_weight="1.2"
                                 style="@style/key_button_line4" />
 
                             <Button
@@ -429,8 +490,229 @@
                                 android:id="@+id/key_button_slash"
                                 style="@style/key_button_line4_sym" />
                         </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/keyboardSymbolsPanel">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine1Panel">
+
+                            <Button
+                                android:text="~"
+                                android:id="@+id/key_button_symbol_asciitilde"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="!"
+                                android:id="@+id/key_button_symbol_exclam"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="\@"
+                                android:id="@+id/key_button_symbol_at"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="#"
+                                android:id="@+id/key_button_symbol_numbersign"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="$"
+                                android:id="@+id/key_button_symbol_dollar"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="%"
+                                android:id="@+id/key_button_symbol_percent"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="^"
+                                android:id="@+id/key_button_symbol_asciicircum"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="&amp;"
+                                android:id="@+id/key_button_symbol_ampersand"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="("
+                                android:id="@+id/key_button_symbol_parenleft"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text=")"
+                                android:id="@+id/key_button_symbol_parenright"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="↑"
+                                android:id="@+id/key_button_arrow_Up"
+                                style="@style/key_button_symbol_line1"
+                                android:background="@color/arrow_key" />
+                            <Button
+                                android:text="*"
+                                android:id="@+id/key_button_symbol_asterisk"
+                                style="@style/key_button_symbol_line1" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine2Panel">
+
+                            <Button
+                                android:text="`"
+                                android:id="@+id/key_button_symbol_grave"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="'"
+                                android:id="@+id/key_button_symbol_apostrophe"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="&quot;"
+                                android:id="@+id/key_button_symbol_quotedbl"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="/"
+                                android:id="@+id/key_button_symbol_slash"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="\"
+                                android:id="@+id/key_button_symbol_backslash"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="["
+                                android:id="@+id/key_button_symbol_bracketleft"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="]"
+                                android:id="@+id/key_button_symbol_bracketright"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="{"
+                                android:id="@+id/key_button_symbol_braceleft"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="}"
+                                android:id="@+id/key_button_symbol_braceright"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="←"
+                                android:id="@+id/key_button_arrow_Left"
+                                style="@style/key_button_symbol_line2"
+                                android:background="@color/arrow_key" />
+                            <Button
+                                android:text="↓"
+                                android:id="@+id/key_button_arrow_Down"
+                                style="@style/key_button_symbol_line2"
+                                android:background="@color/arrow_key" />
+                            <Button
+                                android:text="→"
+                                android:id="@+id/key_button_arrow_Right"
+                                style="@style/key_button_symbol_line2"
+                                android:background="@color/arrow_key" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine3Panel">
+
+
+                            <Button
+                                android:text=":"
+                                android:id="@+id/key_button_symbol_colon"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text=";"
+                                android:id="@+id/key_button_symbol_semicolon"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text=","
+                                android:id="@+id/key_button_symbol_comma"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="."
+                                android:id="@+id/key_button_symbol_period"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="&lt;"
+                                android:id="@+id/key_button_symbol_less"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="&gt;"
+                                android:id="@+id/key_button_symbol_greater"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="="
+                                android:id="@+id/key_button_symbol_equal"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="-"
+                                android:id="@+id/key_button_symbol_minus"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="+"
+                                android:id="@+id/key_button_symbol_plus"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="_"
+                                android:id="@+id/key_button_symbol_underscore"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="|"
+                                android:id="@+id/key_button_symbol_bar"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="\?"
+                                android:id="@+id/key_button_symbol_question"
+                                style="@style/key_button_symbol_line3" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine4Panel">
+                            <Button
+                                android:text="ABC"
+                                android:id="@+id/switchToAlphaButton"
+                                style="@style/key_button_symbol_line4"
+                                android:layout_weight="0.5"/>
+                            <Button
+                                android:text="Esc"
+                                android:id="@+id/key_button_Escape"
+                                style="@style/key_button_symbol_line4" />
+                            <Button
+                                android:text="Tab"
+                                android:id="@+id/key_button_Tab"
+                                style="@style/key_button_symbol_line4" />
+                            <Button
+                                android:text="Del"
+                                android:id="@+id/key_button_Delete"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="Page Up"
+                                android:id="@+id/key_button_Page_Up"
+                                style="@style/key_button_symbol_line3"
+                                android:layout_weight="0.9"/>
+                            <Button
+                                android:text="Page Down"
+                                android:id="@+id/key_button_Page_Down"
+                                style="@style/key_button_symbol_line3"
+                                android:layout_weight="1.0"/>
+                            <Button
+                                android:text="Print Screen"
+                                android:id="@+id/key_button_PrintScreen"
+                                android:layout_weight="1.1"
+                                style="@style/key_button_symbol_line4" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -444,7 +726,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="fill_parent"
                     android:id="@+id/logTextView"
-                    android:background="@drawable/logview_border"/>
+                    android:background="@drawable/logview_border"
+                    android:text="@string/server_echo"/>
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -477,15 +760,6 @@
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/menuButton"
-        android:layout_gravity="right|top"
-        android:background="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
-        android:layout_marginTop="10dp"
-        android:visibility="gone" />
 
     <!--
     <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"

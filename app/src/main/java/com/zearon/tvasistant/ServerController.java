@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -26,30 +27,55 @@ public class ServerController {
     }
 
     private Config config;
-    private Thread networkThread;
+    private DatagramSocket socket;
+    private Thread networkSendThread;
+    private Thread networkRecvThread;
     private ConcurrentLinkedQueue<Instruction> instructionQueue = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<OnResponseListener> responseListeners = new ConcurrentLinkedQueue<>();
 
     public ServerController() {
         config = Config.getInstance();
+        try {
+            socket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+            return;
+        }
 
-        networkThread = new Thread(() -> networkThreadMain());
-        networkThread.setDaemon(true);
-        networkThread.start();
+        networkSendThread = new Thread(() -> networkSendThreadMain(), "Network-send");
+        networkSendThread.setDaemon(true);
+        networkSendThread.start();
+
+        networkRecvThread = new Thread(() -> networkRecvThreadMain(), "Network-recv");
+        networkRecvThread.setDaemon(true);
+        networkRecvThread.start();
     }
 
     public enum MouseButton {
         LEFT, MIDDLE, RIGHT, WHEEL_UP, WHEEL_DOWN
     }
 
-    private static interface AssemblePacketCallback {
-        public void assemblePayload(DataOutputStream dos) throws IOException;
+    interface Instruction {
+        void sendInstruction(DatagramSocket socket, ByteArrayOutputStream baos, DataOutputStream dos);
     }
 
-    private void networkThreadMain() {
+    interface AssemblePacketCallback {
+        void assemblePayload(DataOutputStream dos) throws IOException;
+    }
+
+    public interface OnResponseListener {
+        void onResponse(String message);
+    }
+
+    private void networkSendThreadMain() {
+        // Construct udp package in byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+
         while (true) {
             while (!instructionQueue.isEmpty()) {
                 Instruction instruction = instructionQueue.poll();
-                instruction.sendInstruction();
+                instruction.sendInstruction(socket, baos, dos);
             }
 
             try {
@@ -63,12 +89,45 @@ public class ServerController {
         }
     }
 
-    private void sendPacketToServer(int instCode, AssemblePacketCallback callback)
-            throws IOException {
+    private void networkRecvThreadMain() {
+        // Create buffer to hold received messages.
+        byte[] recvBuffer = new byte[2014];
+        int packetDataLength;
+        DatagramPacket packet = new DatagramPacket(recvBuffer, recvBuffer.length);
 
-        // Construct udp package in byte array
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
+        while (true) {
+            try {
+                socket.receive(packet);
+                String responseMsg = new String(recvBuffer, packet.getOffset(), packet.getLength(), "utf-8");
+
+                // call all OnResponseListeners
+                for (OnResponseListener listener : responseListeners) {
+                    listener.onResponse(responseMsg);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addCommand(int instCode, AssemblePacketCallback callback) {
+        instructionQueue.add((socket, baos, dos) -> {
+            try {
+                sendPacketToServer(socket, baos, dos, instCode, callback);
+            } catch (IOException e) {
+                Log.e("server_controller", "Cannot send packet to server", e);
+                log("Cannot send packet to server", e);
+            }
+        });
+        synchronized (instructionQueue) {
+            instructionQueue.notify();
+        }
+    }
+
+    private void sendPacketToServer(DatagramSocket socket, ByteArrayOutputStream baos, DataOutputStream dos,
+                                    int instCode, AssemblePacketCallback callback) throws IOException {
+        // Reset output buffer
+        baos.reset();
 
         // Write instruction code
         dos.writeByte(instCode);
@@ -82,12 +141,9 @@ public class ServerController {
         int dataLength = data.length;
         Log.v("server_controller", "***Packet: " + Arrays.toString(data));
 
-        InetAddress addr = InetAddress.getByName(config.getServerHost());
-        DatagramSocket socket = new DatagramSocket();
+        InetAddress addr = InetAddress.getByName(config.getServerHostname());
         DatagramPacket packet = new DatagramPacket(data, dataLength, addr, config.getServerPort());
         socket.send(packet);
-
-        dos.close();
     }
 
     /**
@@ -102,22 +158,35 @@ public class ServerController {
         dos.writeByte(bytes + 2);
     }
 
+    public void addOnResponseListener(OnResponseListener listener) {
+        responseListeners.add(listener);
+    }
+
     public void startBrowser() {
-        addCommand(1, null);
+        addCommand(0x01, null);
     }
 
     public void stopBrowser() {
-        addCommand(2, null);
+        addCommand(0x02, null);
+    }
+
+    public void changeSoundOutputDevice() {
+        int soundCard = Config.getInstance().getSoundCardIndex();
+        String deviceName = Config.getInstance().getOutputSoundDeviceName();
+        addCommand(0x0a, dao -> {
+            dao.writeInt(soundCard);
+            dao.write(deviceName.getBytes("utf-8"));
+        });
     }
 
     public void sendTextInput(String text) {
-        addCommand(3, dao -> {
+        addCommand(0x03, dao -> {
             dao.write(text.getBytes("utf-8"));
         });
     }
 
     public void sendKeyPress(String keyText) {
-        addCommand(4, dao -> {
+        addCommand(0x04, dao -> {
             dao.write(keyText.getBytes("utf-8"));
         });
     }
@@ -128,14 +197,14 @@ public class ServerController {
      * @param eventType eventType. 1 - key_down, 2 - key_up
      */
     public void sendKeyEvent(String keyText, int eventType) {
-        addCommand(9, dao -> {
+        addCommand(0x09, dao -> {
             dao.writeInt(eventType);
             dao.write(keyText.getBytes("utf-8"));
         });
     }
 
     public void sendMouseMove(int deltaX, int deltaY) {
-        addCommand(5, dao -> {
+        addCommand(0x05, dao -> {
             dao.writeInt(deltaX);
             dao.writeInt(deltaY);
         });
@@ -143,14 +212,14 @@ public class ServerController {
 
     public void sendMouseClick(MouseButton mouseButton) {
         int button = mouseButton.ordinal() + 1;
-        addCommand(6, dao -> {
+        addCommand(0x06, dao -> {
             dao.writeInt(button);
         });
     }
 
     public void sendMouseDoubleClick(MouseButton mouseButton) {
         int button = mouseButton.ordinal() + 1;
-        addCommand(7, dao -> {
+        addCommand(0x07, dao -> {
             dao.writeInt(button);
         });
     }
@@ -162,7 +231,7 @@ public class ServerController {
      */
     public void sendMouseEvent(MouseButton mouseButton, int eventType) {
         int button = mouseButton.ordinal() + 1;
-        addCommand(8, dao -> {
+        addCommand(0x08, dao -> {
             dao.writeInt(button);
             dao.writeInt(eventType);
         });
@@ -174,26 +243,8 @@ public class ServerController {
         });
     }
 
-    private void addCommand(int instCode, AssemblePacketCallback callback) {
-        instructionQueue.add(() -> {
-            try {
-                sendPacketToServer(instCode, callback);
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
-        });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
-    }
-
     public void log(String msg, Throwable e) {
 
     }
 
-}
-
-interface Instruction {
-    void sendInstruction();
 }

@@ -9,6 +9,16 @@ import java.util.ArrayList;
  * Created by zhiyuangong on 17/5/9.
  */
 public class SoftKeyboard {
+    static class KeyButtonInfo {
+        public View button;
+        public String keyText;
+
+        public KeyButtonInfo(View button, String keyText) {
+            this.button = button;
+            this.keyText = keyText;
+        }
+    }
+
     private int SHIFT_STATUS = 0;
     private boolean SOFT_KEYBOARD_HIDDEN = false;
 
@@ -18,12 +28,17 @@ public class SoftKeyboard {
     private final ArrayList<KeyButtonInfo> otherButtons = new ArrayList<>();
 
     private ServerController controller = ServerController.getInstance();
+    private View commandsPanel, keyboardABC, keyboardSymbols;
     private View shiftButton;
 
     public SoftKeyboard() {
     }
 
     public void initWithKeyButtons(Activity activity) {
+        commandsPanel = activity.findViewById(R.id.commandsPanel);
+        keyboardABC = activity.findViewById(R.id.softKeyBoard);
+        keyboardSymbols = activity.findViewById(R.id.keyboardSymbolsPanel);
+
         // Add all digit key buttons to the digitButtons list
         digitButtons.add((Button) activity.findViewById(R.id.key_button_1));
         digitButtons.add((Button) activity.findViewById(R.id.key_button_2));
@@ -64,7 +79,10 @@ public class SoftKeyboard {
         letterButtons.add((Button) activity.findViewById(R.id.key_button_n));
         letterButtons.add((Button) activity.findViewById(R.id.key_button_m));
 
+
         // Other buttons:
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_escape), "Escape"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_return), "Return"));
         otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_backspace), "BackSpace"));
         otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.inputSwitchButton), "ctrl+space"));
         otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_space), "space"));
@@ -75,6 +93,49 @@ public class SoftKeyboard {
         otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_comma), "comma"));
         otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_colon), "colon"));
         otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_slash), "slash"));
+        // Symbol buttons:
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_asciitilde), "asciitilde"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_exclam), "exclam"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_at), "at"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_numbersign), "numbersign"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_dollar), "dollar"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_percent), "percent"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_asciicircum), "asciicircum"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_ampersand), "ampersand"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_parenleft), "parenleft"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_parenright), "parenright"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_asterisk), "asterisk"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_bar), "bar"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_grave), "grave"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_apostrophe), "apostrophe"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_quotedbl), "quotedbl"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_underscore), "underscore"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_slash), "slash"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_backslash), "backslash"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_bracketleft), "bracketleft"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_bracketright), "bracketright"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_braceleft), "braceleft"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_braceright), "braceright"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_colon), "colon"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_semicolon), "semicolon"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_comma), "comma"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_period), "period"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_less), "less"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_greater), "greater"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_equal), "equal"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_minus), "minus"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_plus), "plus"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_symbol_question), "question"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_Page_Up), "Page_Up"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_Page_Down), "Page_Down"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_arrow_Up), "Up"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_arrow_Left), "Left"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_arrow_Down), "Down"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_arrow_Right), "Right"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_Delete), "Delete"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_Escape), "Escape"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_Tab), "Tab"));
+        otherButtons.add(new KeyButtonInfo(activity.findViewById(R.id.key_button_PrintScreen), "PrintScreen"));
 
         // Add event listeners for all digit key buttons
         for (Button digitButton : digitButtons) {
@@ -117,6 +178,16 @@ public class SoftKeyboard {
         shiftButton = activity.findViewById(R.id.key_button_shift);
         shiftButton.setOnClickListener(v -> onShiftClicked(v));
 
+        // Add event listener for command buttons
+        activity.findViewById(R.id.volumeLowerButton).setOnClickListener(v -> onCommandLowerVolume());
+        activity.findViewById(R.id.volumeRaiseButton).setOnClickListener(v -> onCommandRaiseVolume());
+
+        // Add event listener for commands key
+        activity.findViewById(R.id.switchToCommandsButton).setOnClickListener(v -> switchToCommands());
+        activity.findViewById(R.id.switchToKeyboardButton).setOnClickListener(v -> switchToKeyboardABC());
+        activity.findViewById(R.id.switchToSymbolsButton).setOnClickListener(v -> switchToKeyboardSymbols());
+        activity.findViewById(R.id.switchToAlphaButton).setOnClickListener(v -> switchToKeyboardABC());
+
         // Soft keyboard toggle button
         if (SOFT_KEYBOARD_HIDDEN) {
             activity.findViewById(R.id.bottomPanel).setVisibility(View.GONE);
@@ -124,6 +195,8 @@ public class SoftKeyboard {
         // Add event listener for toggle soft keyboard button
         activity.findViewById(R.id.toggleSoftKeyboardBtn).setOnClickListener(
                 v -> onToggleSoftKeyboardBtnClicked(activity.findViewById(R.id.bottomPanel)));
+
+        switchToCommands();
     }
 
     /**
@@ -209,6 +282,14 @@ public class SoftKeyboard {
         }
     }
 
+    private void onCommandLowerVolume() {
+        controller.sendKeyPress("XF86AudioLowerVolume");
+    }
+
+    private void onCommandRaiseVolume() {
+        controller.sendKeyPress("XF86AudioRaiseVolume");
+    }
+
     public void onToggleSoftKeyboardBtnClicked(View bottomPanel) {
         SOFT_KEYBOARD_HIDDEN = ! SOFT_KEYBOARD_HIDDEN;
         if (SOFT_KEYBOARD_HIDDEN) {
@@ -217,14 +298,22 @@ public class SoftKeyboard {
             bottomPanel.setVisibility(View.VISIBLE);
         }
     }
-}
 
-class KeyButtonInfo {
-    public View button;
-    public String keyText;
+    private void switchToCommands() {
+        commandsPanel.setVisibility(View.VISIBLE);
+        keyboardABC.setVisibility(View.GONE);
+        keyboardSymbols.setVisibility(View.GONE);
+    }
 
-    public KeyButtonInfo(View button, String keyText) {
-        this.button = button;
-        this.keyText = keyText;
+    private void switchToKeyboardABC() {
+        commandsPanel.setVisibility(View.GONE);
+        keyboardABC.setVisibility(View.VISIBLE);
+        keyboardSymbols.setVisibility(View.GONE);
+    }
+
+    private void switchToKeyboardSymbols() {
+        commandsPanel.setVisibility(View.GONE);
+        keyboardABC.setVisibility(View.GONE);
+        keyboardSymbols.setVisibility(View.VISIBLE);
     }
 }
