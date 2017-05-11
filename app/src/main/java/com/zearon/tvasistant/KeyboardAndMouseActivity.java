@@ -2,7 +2,8 @@ package com.zearon.tvasistant;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Resources;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -92,9 +93,9 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
         }
     };
 
-    private final Config config = Config.initInstance(this);
-    private final ServerController controller = ServerController.getInstance();
-    private final SoftKeyboard softKeyboard = new SoftKeyboard();
+    private Config config = null;
+    private ServerController controller = null;
+    private SoftKeyboard softKeyboard = null;
     private final StringRingQueue echoLogQueue = new StringRingQueue(35, "服务端回显：\n");
 
     private View mouseView = null;
@@ -105,6 +106,8 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_keyboard_and_mouse);
+
+        initPreferences();
 
         /*Resources resources = getResources();
         int resourceId = resources.getIdentifier("status_bar_height", "dimen","android");
@@ -155,6 +158,18 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100);
+    }
+
+    private void initPreferences() {
+        // Load default preferences
+        PreferenceManager.setDefaultValues(this, R.xml.pref_server, true);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_hardware, true);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_mouse, true);
+
+        // Init fields
+        config = Config.initInstance(this);
+        controller = ServerController.getInstance();
+        softKeyboard = new SoftKeyboard();
     }
 
     private void toggle() {
@@ -221,6 +236,8 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
     public void onStopBrowserBtnClicked(View v) {
         controller.stopBrowser();
     }
+
+    public void onChangeSoundOutputDeviceBtnClicked(View v) { controller.changeSoundOutputDevice(); }
 
     public void onOtherCommandBtnClicked(View v) {
         // Not implemented yet.

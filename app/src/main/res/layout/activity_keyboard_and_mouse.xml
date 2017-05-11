@@ -172,6 +172,17 @@
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@string/sound_output"
+                            android:id="@+id/changeSoundDeviceButton"
+                            android:paddingLeft="2dp"
+                            android:paddingRight="2dp"
+                            android:onClick="onChangeSoundOutputDeviceBtnClicked"
+                            android:layout_row="1"
+                            android:layout_column="3" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="@string/start_browser"
                             android:id="@+id/startBrowserButton"
                             android:paddingLeft="2dp"
@@ -428,7 +439,7 @@
 
                             <Button
                                 android:text="符"
-                                android:id="@+id/symbolsButton"
+                                android:id="@+id/switchToSymbolsButton"
                                 android:layout_weight="0.5"
                                 style="@style/key_button_line4" />
 
@@ -486,7 +497,220 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/keyboardSymbolsPanel"></LinearLayout>
+                        android:id="@+id/keyboardSymbolsPanel">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine1Panel">
+
+                            <Button
+                                android:text="~"
+                                android:id="@+id/key_button_symbol_asciitilde"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="!"
+                                android:id="@+id/key_button_symbol_exclam"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="\@"
+                                android:id="@+id/key_button_symbol_at"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="#"
+                                android:id="@+id/key_button_symbol_numbersign"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="$"
+                                android:id="@+id/key_button_symbol_dollar"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="%"
+                                android:id="@+id/key_button_symbol_percent"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="^"
+                                android:id="@+id/key_button_symbol_asciicircum"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="&amp;"
+                                android:id="@+id/key_button_symbol_ampersand"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="("
+                                android:id="@+id/key_button_symbol_parenleft"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text=")"
+                                android:id="@+id/key_button_symbol_parenright"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="↑"
+                                android:id="@+id/key_button_arrow_Up"
+                                style="@style/key_button_symbol_line1"
+                                android:background="@color/arrow_key" />
+                            <Button
+                                android:text="*"
+                                android:id="@+id/key_button_symbol_asterisk"
+                                style="@style/key_button_symbol_line1" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine2Panel">
+
+                            <Button
+                                android:text="`"
+                                android:id="@+id/key_button_symbol_grave"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="'"
+                                android:id="@+id/key_button_symbol_apostrophe"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="&quot;"
+                                android:id="@+id/key_button_symbol_quotedbl"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="/"
+                                android:id="@+id/key_button_symbol_slash"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="\"
+                                android:id="@+id/key_button_symbol_backslash"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="["
+                                android:id="@+id/key_button_symbol_bracketleft"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="]"
+                                android:id="@+id/key_button_symbol_bracketright"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="{"
+                                android:id="@+id/key_button_symbol_braceleft"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="}"
+                                android:id="@+id/key_button_symbol_braceright"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="←"
+                                android:id="@+id/key_button_arrow_Left"
+                                style="@style/key_button_symbol_line2"
+                                android:background="@color/arrow_key" />
+                            <Button
+                                android:text="↓"
+                                android:id="@+id/key_button_arrow_Down"
+                                style="@style/key_button_symbol_line2"
+                                android:background="@color/arrow_key" />
+                            <Button
+                                android:text="→"
+                                android:id="@+id/key_button_arrow_Right"
+                                style="@style/key_button_symbol_line2"
+                                android:background="@color/arrow_key" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine3Panel">
+
+
+                            <Button
+                                android:text=":"
+                                android:id="@+id/key_button_symbol_colon"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text=";"
+                                android:id="@+id/key_button_symbol_semicolon"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text=","
+                                android:id="@+id/key_button_symbol_comma"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="."
+                                android:id="@+id/key_button_symbol_period"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="&lt;"
+                                android:id="@+id/key_button_symbol_less"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="&gt;"
+                                android:id="@+id/key_button_symbol_greater"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="="
+                                android:id="@+id/key_button_symbol_equal"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="-"
+                                android:id="@+id/key_button_symbol_minus"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="+"
+                                android:id="@+id/key_button_symbol_plus"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="_"
+                                android:id="@+id/key_button_symbol_underscore"
+                                style="@style/key_button_symbol_line2" />
+                            <Button
+                                android:text="|"
+                                android:id="@+id/key_button_symbol_bar"
+                                style="@style/key_button_symbol_line1" />
+                            <Button
+                                android:text="\?"
+                                android:id="@+id/key_button_symbol_question"
+                                style="@style/key_button_symbol_line3" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/symbolKeyLine4Panel">
+                            <Button
+                                android:text="ABC"
+                                android:id="@+id/switchToAlphaButton"
+                                style="@style/key_button_symbol_line4"
+                                android:layout_weight="0.5"/>
+                            <Button
+                                android:text="Esc"
+                                android:id="@+id/key_button_Escape"
+                                style="@style/key_button_symbol_line4" />
+                            <Button
+                                android:text="Tab"
+                                android:id="@+id/key_button_Tab"
+                                style="@style/key_button_symbol_line4" />
+                            <Button
+                                android:text="Del"
+                                android:id="@+id/key_button_Delete"
+                                style="@style/key_button_symbol_line3" />
+                            <Button
+                                android:text="Page Up"
+                                android:id="@+id/key_button_Page_Up"
+                                style="@style/key_button_symbol_line3"
+                                android:layout_weight="0.9"/>
+                            <Button
+                                android:text="Page Down"
+                                android:id="@+id/key_button_Page_Down"
+                                style="@style/key_button_symbol_line3"
+                                android:layout_weight="1.0"/>
+                            <Button
+                                android:text="Print Screen"
+                                android:id="@+id/key_button_PrintScreen"
+                                android:layout_weight="1.1"
+                                style="@style/key_button_symbol_line4" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
             </RelativeLayout>

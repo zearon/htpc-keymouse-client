@@ -63,4 +63,40 @@
         <item name="android:layout_margin">0dp</item>
         <item name="android:layout_weight">0.5</item>
     </style>
+
+    <!--定义一个叫 key_button_symbol_line1 ：标点符号按键 -->
+    <style name="key_button_symbol_line1" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">0px</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_weight">0.5</item>
+    </style>
+
+    <!--定义一个叫 key_button_symbol_line2 ：标点符号按键 -->
+    <style name="key_button_symbol_line2" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">0px</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_weight">0.5</item>
+    </style>
+
+    <!--定义一个叫 key_button_symbol_line3 ：标点符号按键 -->
+    <style name="key_button_symbol_line3" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">0px</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_weight">0.5</item>
+    </style>
+
+    <!--定义一个叫 key_button_symbol_line4 ：标点符号按键 -->
+    <style name="key_button_symbol_line4" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">0px</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_weight">0.4</item>
+    </style>
 </resources>

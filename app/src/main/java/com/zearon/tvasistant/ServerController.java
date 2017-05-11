@@ -141,7 +141,7 @@ public class ServerController {
         int dataLength = data.length;
         Log.v("server_controller", "***Packet: " + Arrays.toString(data));
 
-        InetAddress addr = InetAddress.getByName(config.getServerHost());
+        InetAddress addr = InetAddress.getByName(config.getServerHostname());
         DatagramPacket packet = new DatagramPacket(data, dataLength, addr, config.getServerPort());
         socket.send(packet);
     }
@@ -163,21 +163,30 @@ public class ServerController {
     }
 
     public void startBrowser() {
-        addCommand(1, null);
+        addCommand(0x01, null);
     }
 
     public void stopBrowser() {
-        addCommand(2, null);
+        addCommand(0x02, null);
+    }
+
+    public void changeSoundOutputDevice() {
+        int soundCard = Config.getInstance().getSoundCardIndex();
+        String deviceName = Config.getInstance().getOutputSoundDeviceName();
+        addCommand(0x0a, dao -> {
+            dao.writeInt(soundCard);
+            dao.write(deviceName.getBytes("utf-8"));
+        });
     }
 
     public void sendTextInput(String text) {
-        addCommand(3, dao -> {
+        addCommand(0x03, dao -> {
             dao.write(text.getBytes("utf-8"));
         });
     }
 
     public void sendKeyPress(String keyText) {
-        addCommand(4, dao -> {
+        addCommand(0x04, dao -> {
             dao.write(keyText.getBytes("utf-8"));
         });
     }
@@ -188,14 +197,14 @@ public class ServerController {
      * @param eventType eventType. 1 - key_down, 2 - key_up
      */
     public void sendKeyEvent(String keyText, int eventType) {
-        addCommand(9, dao -> {
+        addCommand(0x09, dao -> {
             dao.writeInt(eventType);
             dao.write(keyText.getBytes("utf-8"));
         });
     }
 
     public void sendMouseMove(int deltaX, int deltaY) {
-        addCommand(5, dao -> {
+        addCommand(0x05, dao -> {
             dao.writeInt(deltaX);
             dao.writeInt(deltaY);
         });
@@ -203,14 +212,14 @@ public class ServerController {
 
     public void sendMouseClick(MouseButton mouseButton) {
         int button = mouseButton.ordinal() + 1;
-        addCommand(6, dao -> {
+        addCommand(0x06, dao -> {
             dao.writeInt(button);
         });
     }
 
     public void sendMouseDoubleClick(MouseButton mouseButton) {
         int button = mouseButton.ordinal() + 1;
-        addCommand(7, dao -> {
+        addCommand(0x07, dao -> {
             dao.writeInt(button);
         });
     }
@@ -222,7 +231,7 @@ public class ServerController {
      */
     public void sendMouseEvent(MouseButton mouseButton, int eventType) {
         int button = mouseButton.ordinal() + 1;
-        addCommand(8, dao -> {
+        addCommand(0x08, dao -> {
             dao.writeInt(button);
             dao.writeInt(eventType);
         });
