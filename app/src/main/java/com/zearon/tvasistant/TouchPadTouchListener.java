@@ -14,10 +14,11 @@ public class TouchPadTouchListener implements View.OnTouchListener {
     private Config  config;
 
     private int status = 0;
-    private float downX,  downY;
-    private float x,      y;
-    private float lastX,  lastY;
-    private float deltaX, deltaY;
+    private float downX,        downY;
+    private float x,            y;
+    private float lastX,        lastY;
+    private float deltaX,       deltaY;
+    private float deltaXTotal,  deltaYTotal;
     private float accumulativeDeltaX, accumulativeDeltaY;
     private float scrollThresholdPixel;
 
@@ -54,36 +55,43 @@ public class TouchPadTouchListener implements View.OnTouchListener {
                 lastY = downY = event.getY();
                 break;
             case 1:
-                // mouse down status
+                // first finger pressed down status
                 if (action == MotionEvent.ACTION_UP) {
                     status = 0;
-                    log("mouse", "Mouse click");
-                    controller.sendMouseClick(ServerController.MouseButton.LEFT);
+                    mouseLeftClick();
                 } else if (action == MotionEvent.ACTION_MOVE) {
                     status = 2;
                     mouseMove(event);
                 } else if (action == MotionEvent.ACTION_POINTER_DOWN) {
                     status = 3;
                     accumulativeDeltaX = accumulativeDeltaY = 0;
-                    log("mouse", "Mouse scroll mode - Two finger");
+                    Log.v("mouse", "Mouse scroll mode - Two finger");
                 }
                 break;
             case 2:
-                // mouse moving status
+                // One finger moving status
                 if (action == MotionEvent.ACTION_UP) {
                     status = 0;
+                    updateXY(event);
+                    if (consideredAsNotMoving()) {
+                        mouseLeftClick();
+                    }
                 } else if (action == MotionEvent.ACTION_MOVE) {
                     mouseMove(event);
                 } else if (action == MotionEvent.ACTION_POINTER_DOWN) {
                     status = 3;
                     accumulativeDeltaX = accumulativeDeltaY = 0;
-                    log("mouse", "Mouse scroll mode - Two finger");
+                    Log.v("mouse", "Mouse scroll mode - Two finger");
                 }
                 break;
             case 3:
-                // scroll status
+                // Two fingers moving status
                 if (action == MotionEvent.ACTION_UP) {
                     status = 0;
+                    updateXY(event);
+                    if (consideredAsNotMoving()) {
+                        mouseRightClick();
+                    }
                 } else if (action == MotionEvent.ACTION_MOVE) {
                     scrollMove(event);
                 }
@@ -91,25 +99,39 @@ public class TouchPadTouchListener implements View.OnTouchListener {
         }
     }
 
-    private void mouseMove(MotionEvent event) {
+    private void mouseLeftClick() {
+        Log.v("mouse", "Mouse left click");
+        controller.sendMouseClick(ServerController.MouseButton.LEFT);
+    }
+
+    private void mouseRightClick() {
+        Log.v("mouse", "Mouse right click");
+        controller.sendMouseClick(ServerController.MouseButton.RIGHT);
+    }
+
+    private void updateXY(MotionEvent event) {
         x = event.getX();
         y = event.getY();
         deltaX = x - lastX;
         deltaY = y - lastY;
+        deltaXTotal = x - downX;
+        deltaYTotal = y - downY;
         lastX = x;
         lastY = y;
+    }
 
-        log("mouse", "Mouse move: (" + Math.round(deltaX) + "," + Math.round(deltaY) + "), total: (" + (x-downX) + "," + (y-downY));
+    private boolean consideredAsNotMoving() {
+        return Math.abs(deltaXTotal) < scrollThresholdPixel && Math.abs(deltaYTotal) < scrollThresholdPixel;
+    }
+
+    private void mouseMove(MotionEvent event) {
+        updateXY(event);
+        Log.v("mouse", "Mouse move: (" + Math.round(deltaX) + "," + Math.round(deltaY) + "), total: (" + (x-downX) + "," + (y-downY));
         controller.sendMouseMove(Math.round(deltaX), Math.round(deltaY));
     }
 
     private void scrollMove(MotionEvent event) {
-        x = event.getX();
-        y = event.getY();
-        deltaX = x - lastX;
-        deltaY = y - lastY;
-        lastX = x;
-        lastY = y;
+        updateXY(event);
 
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             // Vertical scroll
@@ -125,12 +147,12 @@ public class TouchPadTouchListener implements View.OnTouchListener {
             accumulativeDeltaY += delta;
             while (accumulativeDeltaY > scrollThresholdPixel) {
                 accumulativeDeltaY -= scrollThresholdPixel;
-                log("mouse", "Scroll down");
+                Log.v("mouse", "Scroll down");
                 controller.sendMouseClick(ServerController.MouseButton.WHEEL_DOWN);
             }
             while (accumulativeDeltaY < -scrollThresholdPixel) {
                 accumulativeDeltaY += scrollThresholdPixel;
-                log("mouse", "Scroll up");
+                Log.v("mouse", "Scroll up");
                 controller.sendMouseClick(ServerController.MouseButton.WHEEL_UP);
             }
         }
@@ -140,12 +162,12 @@ public class TouchPadTouchListener implements View.OnTouchListener {
             controller.sendKeyEvent("shift", 1);
             while (accumulativeDeltaX > scrollThresholdPixel) {
                 accumulativeDeltaX -= scrollThresholdPixel;
-                log("mouse", "Scroll right");
+                Log.v("mouse", "Scroll right");
                 controller.sendMouseClick(ServerController.MouseButton.WHEEL_DOWN);
             }
             while (accumulativeDeltaX < -scrollThresholdPixel) {
                 accumulativeDeltaX += scrollThresholdPixel;
-                log("mouse", "Scroll left");
+                Log.v("mouse", "Scroll left");
                 controller.sendMouseClick(ServerController.MouseButton.WHEEL_UP);
             }
             controller.sendKeyEvent("shift", 2);

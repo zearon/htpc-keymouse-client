@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -26,30 +27,55 @@ public class ServerController {
     }
 
     private Config config;
-    private Thread networkThread;
+    private DatagramSocket socket;
+    private Thread networkSendThread;
+    private Thread networkRecvThread;
     private ConcurrentLinkedQueue<Instruction> instructionQueue = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<OnResponseListener> responseListeners = new ConcurrentLinkedQueue<>();
 
     public ServerController() {
         config = Config.getInstance();
+        try {
+            socket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+            return;
+        }
 
-        networkThread = new Thread(() -> networkThreadMain());
-        networkThread.setDaemon(true);
-        networkThread.start();
+        networkSendThread = new Thread(() -> networkSendThreadMain(), "Network-send");
+        networkSendThread.setDaemon(true);
+        networkSendThread.start();
+
+        networkRecvThread = new Thread(() -> networkRecvThreadMain(), "Network-recv");
+        networkRecvThread.setDaemon(true);
+        networkRecvThread.start();
     }
 
     public enum MouseButton {
         LEFT, MIDDLE, RIGHT, WHEEL_UP, WHEEL_DOWN
     }
 
-    private static interface AssemblePacketCallback {
-        public void assemblePayload(DataOutputStream dos) throws IOException;
+    interface Instruction {
+        void sendInstruction(DatagramSocket socket, ByteArrayOutputStream baos, DataOutputStream dos);
     }
 
-    private void networkThreadMain() {
+    interface AssemblePacketCallback {
+        void assemblePayload(DataOutputStream dos) throws IOException;
+    }
+
+    public interface OnResponseListener {
+        void onResponse(String message);
+    }
+
+    private void networkSendThreadMain() {
+        // Construct udp package in byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+
         while (true) {
             while (!instructionQueue.isEmpty()) {
                 Instruction instruction = instructionQueue.poll();
-                instruction.sendInstruction();
+                instruction.sendInstruction(socket, baos, dos);
             }
 
             try {
@@ -63,12 +89,45 @@ public class ServerController {
         }
     }
 
-    private void sendPacketToServer(int instCode, AssemblePacketCallback callback)
-            throws IOException {
+    private void networkRecvThreadMain() {
+        // Create buffer to hold received messages.
+        byte[] recvBuffer = new byte[2014];
+        int packetDataLength;
+        DatagramPacket packet = new DatagramPacket(recvBuffer, recvBuffer.length);
 
-        // Construct udp package in byte array
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
+        while (true) {
+            try {
+                socket.receive(packet);
+                String responseMsg = new String(recvBuffer, packet.getOffset(), packet.getLength(), "utf-8");
+
+                // call all OnResponseListeners
+                for (OnResponseListener listener : responseListeners) {
+                    listener.onResponse(responseMsg);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addCommand(int instCode, AssemblePacketCallback callback) {
+        instructionQueue.add((socket, baos, dos) -> {
+            try {
+                sendPacketToServer(socket, baos, dos, instCode, callback);
+            } catch (IOException e) {
+                Log.e("server_controller", "Cannot send packet to server", e);
+                log("Cannot send packet to server", e);
+            }
+        });
+        synchronized (instructionQueue) {
+            instructionQueue.notify();
+        }
+    }
+
+    private void sendPacketToServer(DatagramSocket socket, ByteArrayOutputStream baos, DataOutputStream dos,
+                                    int instCode, AssemblePacketCallback callback) throws IOException {
+        // Reset output buffer
+        baos.reset();
 
         // Write instruction code
         dos.writeByte(instCode);
@@ -83,11 +142,8 @@ public class ServerController {
         Log.v("server_controller", "***Packet: " + Arrays.toString(data));
 
         InetAddress addr = InetAddress.getByName(config.getServerHost());
-        DatagramSocket socket = new DatagramSocket();
         DatagramPacket packet = new DatagramPacket(data, dataLength, addr, config.getServerPort());
         socket.send(packet);
-
-        dos.close();
     }
 
     /**
@@ -100,6 +156,10 @@ public class ServerController {
 
         // write start index of payload of the packet
         dos.writeByte(bytes + 2);
+    }
+
+    public void addOnResponseListener(OnResponseListener listener) {
+        responseListeners.add(listener);
     }
 
     public void startBrowser() {
@@ -174,26 +234,8 @@ public class ServerController {
         });
     }
 
-    private void addCommand(int instCode, AssemblePacketCallback callback) {
-        instructionQueue.add(() -> {
-            try {
-                sendPacketToServer(instCode, callback);
-            } catch (IOException e) {
-                Log.e("server_controller", "Cannot send packet to server", e);
-                log("Cannot send packet to server", e);
-            }
-        });
-        synchronized (instructionQueue) {
-            instructionQueue.notify();
-        }
-    }
-
     public void log(String msg, Throwable e) {
 
     }
 
-}
-
-interface Instruction {
-    void sendInstruction();
 }

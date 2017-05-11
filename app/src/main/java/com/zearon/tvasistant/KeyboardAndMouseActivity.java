@@ -1,6 +1,7 @@
 package com.zearon.tvasistant;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -92,9 +94,11 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
 
     private final Config config = Config.initInstance(this);
     private final ServerController controller = ServerController.getInstance();
-
     private final SoftKeyboard softKeyboard = new SoftKeyboard();
+    private final StringRingQueue echoLogQueue = new StringRingQueue(35, "服务端回显：\n");
+
     private View mouseView = null;
+    private TextView logTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +142,9 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
         findViewById((R.id.mouseLeftButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.LEFT));
         findViewById((R.id.mouseMiddleButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.MIDDLE));
         findViewById((R.id.mouseRightButton)).setOnTouchListener(new MouseButtonTouchListener(ServerController.MouseButton.RIGHT));
+
+        logTextView = (TextView) findViewById(R.id.logTextView);
+        controller.addOnResponseListener(msg -> logToLogTextView(msg));
     }
 
     @Override
@@ -191,6 +198,20 @@ public class KeyboardAndMouseActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    private void logToLogTextView(String msg) {
+//        Log.v("main", msg);
+        echoLogQueue.add(msg);
+        logTextView.post( () -> logTextView.setText(echoLogQueue.toString()) );
+//        Log.v("main", msg);
+//        Log.v("main", echoLogQueue.toString());
+    }
+
+    public void onSettingsBtnClicked(View v) {
+        Log.v("main", "Setting button clicked");
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void onStartBrowserBtnClicked(View v) {
