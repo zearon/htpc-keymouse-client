@@ -89,7 +89,7 @@
     <string name="pref_default_server_hostname">server.home</string>
     <string name="pref_default_server_port">8888</string>
     <string name="pref_default_hardware_sound_card_index">0</string>
-    <string name="pref_default_hardware_output_device_name">hdmi-stereo</string>
+    <string name="pref_default_hardware_output_device_name">hdmi-stereo-extra2</string>
     <string name="pref_default_mouse_scroll_threshold_pixel">10</string>
 
     <string name="acton_settings_reset_hardware_pref">重置硬件设置</string>
