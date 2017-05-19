@@ -85,12 +85,18 @@
     <string name="pref_title_hardware_sound_card_index">声卡序号 (通过 pacmd list-cards 命令获取)</string>
     <string name="pref_title_hardware_output_device_name">声音输出设备序号 (通过 pacmd list-cards 命令获取)</string>
     <string name="pref_title_mouse_scroll_threshold_pixel">滚动像素阈值 (越大滚动越不灵敏)</string>
+    <string name="pref_title_mouse_move_threshold_pixel">鼠标移动像素阈值 (小于该值的移动被忽略)</string>
+    <string name="pref_title_mouse_move_sensitivity">一般移动粘滞度 (越大移动越慢)</string>
+    <string name="pref_title_mouse_fine_move_sensitivity">细微移动粘滞度 (越大移动越慢)</string>
 
     <string name="pref_default_server_hostname">server.home</string>
     <string name="pref_default_server_port">8888</string>
     <string name="pref_default_hardware_sound_card_index">0</string>
     <string name="pref_default_hardware_output_device_name">hdmi-stereo-extra2</string>
     <string name="pref_default_mouse_scroll_threshold_pixel">10</string>
+    <string name="pref_default_mouse_move_threshold_pixel">3</string>
+    <string name="pref_default_mouse_move_sensitivity">1.0</string>
+    <string name="pref_default_mouse_fine_move_sensitivity">3.0</string>
 
     <string name="acton_settings_reset_hardware_pref">重置硬件设置</string>
     <string name="action_settings_reset_mouse_pref">重置鼠标设置</string>

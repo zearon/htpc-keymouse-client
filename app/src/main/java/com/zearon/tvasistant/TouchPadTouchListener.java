@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 /**
  * Created by zhiyuangong on 17/5/10.
@@ -20,14 +21,17 @@ public class TouchPadTouchListener implements View.OnTouchListener {
     private float deltaX,       deltaY;
     private float deltaXTotal,  deltaYTotal;
     private float accumulativeDeltaX, accumulativeDeltaY;
-    private float scrollThresholdPixel;
+    private float scrollThresholdPixel, moveThresholdPixel, mouseMoveSensitivity, mouseFineMoveSensitivity;
 
     private TextView logTextView;
+    private ToggleButton fineMouseMovingButton;
 
     public TouchPadTouchListener(Activity activity) {
         controller = ServerController.getInstance();
         config = Config.getInstance();
+        config.addUpdateListener(() -> this.updateConfig());
         logTextView = (TextView) activity.findViewById(R.id.logTextView);
+        fineMouseMovingButton = (ToggleButton) activity.findViewById(R.id.fineMouseMovingButton);
         updateConfig();
     }
 
@@ -40,6 +44,9 @@ public class TouchPadTouchListener implements View.OnTouchListener {
 
     public void updateConfig() {
         scrollThresholdPixel = (float) config.getScrollThresholdPixel();
+        moveThresholdPixel = (float) config.getMoveThresholdPixel();
+        mouseMoveSensitivity = config.getMouseMoveSensitivity();
+        mouseFineMoveSensitivity = config.getMouseFineMoveSensitivity();
     }
 
     private void updateStatus(MotionEvent event) {
@@ -121,13 +128,14 @@ public class TouchPadTouchListener implements View.OnTouchListener {
     }
 
     private boolean consideredAsNotMoving() {
-        return Math.abs(deltaXTotal) < scrollThresholdPixel && Math.abs(deltaYTotal) < scrollThresholdPixel;
+        return Math.abs(deltaXTotal) < moveThresholdPixel && Math.abs(deltaYTotal) < moveThresholdPixel;
     }
 
     private void mouseMove(MotionEvent event) {
         updateXY(event);
-        Log.v("mouse", "Mouse move: (" + Math.round(deltaX) + "," + Math.round(deltaY) + "), total: (" + (x-downX) + "," + (y-downY));
-        controller.sendMouseMove(Math.round(deltaX), Math.round(deltaY));
+        float sensitivity = fineMouseMovingButton.isChecked() ? mouseFineMoveSensitivity : mouseMoveSensitivity;
+        Log.v("mouse", "Mouse move: (" + Math.round(deltaX / sensitivity) + "," + Math.round(deltaY / sensitivity) + ") sensitivity:" + +sensitivity);
+        controller.sendMouseMove(Math.round(deltaX / sensitivity), Math.round(deltaY / sensitivity));
     }
 
     private void scrollMove(MotionEvent event) {
@@ -142,8 +150,8 @@ public class TouchPadTouchListener implements View.OnTouchListener {
         }
     }
 
-    private void accumulateDeltaForScroll(float delta, boolean y) {
-        if (y) {
+    private void accumulateDeltaForScroll(float delta, boolean verticalScroll) {
+        if (verticalScroll) {
             accumulativeDeltaY += delta;
             while (accumulativeDeltaY > scrollThresholdPixel) {
                 accumulativeDeltaY -= scrollThresholdPixel;
