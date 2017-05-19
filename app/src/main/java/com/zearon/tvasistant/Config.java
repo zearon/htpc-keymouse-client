@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.Vector;
+
 /**
  * Created by zhiyuangong on 17/5/9.
  */
@@ -29,16 +31,24 @@ public class Config {
         return instance;
     }
 
+    public interface ConfigUpdateListener {
+        void onUpdate();
+    }
+
     public Config(Activity activity) {
         this.activity = activity;
         init();
     }
 
+    private Vector<ConfigUpdateListener> updateListeners = new Vector<>();
     private String serverHostname;
     private int serverPort;
     private int soundCardIndex;
     private String outputSoundDeviceName;
     private int scrollThresholdPixel;
+    private int moveThresholdPixel;
+    private float mouseMoveSensitivity;
+    private float mouseFineMoveSensitivity;
 
     private void init() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -49,6 +59,19 @@ public class Config {
         Log.v("config", "soundCardIndex: " + soundCardIndex);
         outputSoundDeviceName = sharedPreferences.getString("hardware_output_device_name", "");
         scrollThresholdPixel = Integer.parseInt(sharedPreferences.getString("mouse_scroll_threshold_pixel", ""));
+        moveThresholdPixel = Integer.parseInt(sharedPreferences.getString("mouse_move_threshold_pixel", ""));
+        mouseMoveSensitivity = Float.parseFloat(sharedPreferences.getString("mouse_move_sensitivity", ""));
+        mouseMoveSensitivity = Float.parseFloat(sharedPreferences.getString("mouse_fine_move_sensitivity", ""));
+    }
+
+    public void addUpdateListener(ConfigUpdateListener listener) {
+        updateListeners.add(listener);
+    }
+
+    private void notifyUpdateListeners() {
+        for (ConfigUpdateListener listener : updateListeners) {
+            listener.onUpdate();
+        }
     }
 
     public String getServerHostname() {
@@ -57,6 +80,7 @@ public class Config {
 
     public void setServerHostname(String serverHostname) {
         this.serverHostname = serverHostname;
+        notifyUpdateListeners();
     }
 
     public int getServerPort() {
@@ -65,6 +89,7 @@ public class Config {
 
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
+        notifyUpdateListeners();
     }
 
     public int getSoundCardIndex() {
@@ -73,6 +98,7 @@ public class Config {
 
     public void setSoundCardIndex(int soundCardIndex) {
         this.soundCardIndex = soundCardIndex;
+        notifyUpdateListeners();
     }
 
     public String getOutputSoundDeviceName() {
@@ -81,6 +107,7 @@ public class Config {
 
     public void setOutputSoundDeviceName(String outputSoundDeviceName) {
         this.outputSoundDeviceName = outputSoundDeviceName;
+        notifyUpdateListeners();
     }
 
     public int getScrollThresholdPixel() {
@@ -89,5 +116,33 @@ public class Config {
 
     public void setScrollThresholdPixel(int scrollThreasholdPixel) {
         this.scrollThresholdPixel = scrollThreasholdPixel;
+        notifyUpdateListeners();
+    }
+
+    public int getMoveThresholdPixel() {
+        return moveThresholdPixel;
+    }
+
+    public void setMoveThresholdPixel(int moveThresholdPixel) {
+        this.moveThresholdPixel = moveThresholdPixel;
+        notifyUpdateListeners();
+    }
+
+    public float getMouseMoveSensitivity() {
+        return mouseMoveSensitivity;
+    }
+
+    public void setMouseMoveSensitivity(float mouseMoveSensitivity) {
+        this.mouseMoveSensitivity = mouseMoveSensitivity;
+        notifyUpdateListeners();
+    }
+
+    public float getMouseFineMoveSensitivity() {
+        return mouseFineMoveSensitivity;
+    }
+
+    public void setMouseFineMoveSensitivity(float mouseFineMoveSensitivity) {
+        this.mouseFineMoveSensitivity = mouseFineMoveSensitivity;
+        notifyUpdateListeners();
     }
 }

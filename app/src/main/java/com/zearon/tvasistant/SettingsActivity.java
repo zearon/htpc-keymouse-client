@@ -101,6 +101,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 Config.getInstance().setOutputSoundDeviceName(stringValue);
             } else if ("mouse_scroll_threshold_pixel".equals(keyName)) {
                 Config.getInstance().setScrollThresholdPixel(Integer.parseInt(stringValue));
+            } else if ("mouse_move_threshold_pixel".equals(keyName)) {
+                Config.getInstance().setMoveThresholdPixel(Integer.parseInt(stringValue));
+            } else if ("mouse_move_sensitivity".equals(keyName)) {
+                Config.getInstance().setMouseMoveSensitivity(Float.parseFloat(stringValue));
+            } else if ("mouse_fine_move_sensitivity".equals(keyName)) {
+                Config.getInstance().setMouseFineMoveSensitivity(Float.parseFloat(stringValue));
             }
 
             return true;
@@ -327,6 +333,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("mouse_scroll_threshold_pixel"));
+            bindPreferenceSummaryToValue(findPreference("mouse_move_threshold_pixel"));
+            bindPreferenceSummaryToValue(findPreference("mouse_move_sensitivity"));
+            bindPreferenceSummaryToValue(findPreference("mouse_fine_move_sensitivity"));
         }
 
         @Override

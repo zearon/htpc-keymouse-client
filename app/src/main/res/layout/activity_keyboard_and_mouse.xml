@@ -112,6 +112,14 @@
                                 android:text="@string/mouse_right_button"
                                 style="@style/MouseButtonStyle" />
 
+                            <ToggleButton
+                                android:layout_width="75dp"
+                                android:layout_height="wrap_content"
+                                android:textOn="细微移动"
+                                android:textOff="一般移动"
+                                android:id="@+id/fineMouseMovingButton"
+                                style="@style/MouseButtonStyle"  />
+
                             <ImageButton
                                 android:layout_width="30dp"
                                 android:layout_height="wrap_content"
